@@ -44,7 +44,7 @@ exports.getAllBooks = async (req, res) => {
 
 exports.getOneBook = async (req, res) => {
     const {title} = req.param;
-    console.log(title);
+    console.log(req.param);
   
     try {
         const book = await Book.findOne({title : title});

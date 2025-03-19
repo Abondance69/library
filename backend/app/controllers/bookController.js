@@ -12,12 +12,12 @@ exports.createBook = async (req, res) => {
   } = req.body;
 
   try {
-    let book = await Book.findOne({ title: title });
+    const book = await Book.findOne({ title: title });
     if (book) {
       return res.status(401).json({ msg: "Book already exists." });
     }
 
-    book = await Book.insertOne({
+    await Book.insertOne({
       title,
       author,
       category,
@@ -43,19 +43,65 @@ exports.getAllBooks = async (req, res) => {
 };
 
 exports.getOneBook = async (req, res) => {
-    const {title} = req.param;
-    console.log(req.param);
-  
-    try {
-        const book = await Book.findOne({title : title});
+  const { title } = req.params;
 
-        if(!book) {
-            res.status(404).json({msg : "Book not found"});
-        }
+  try {
+    const book = await Book.findOne({ title: title });
 
-        res.status(200).json(book);
-    
-    }catch(error) {
-        res.status(500).json({msg : `Server error : ${error}`});
+    if (!book) {
+      res.status(404).json({ msg: "Book not found" });
     }
-}
+
+    res.status(200).json(book);
+  } catch (error) {
+    res.status(500).json({ msg: `Server error : ${error}` });
+  }
+};
+
+exports.updateOneBook = async (req, res) => {
+  const oldTitle = req.params.title;
+  const {
+    title,
+    author,
+    category,
+    type,
+    ISBN,
+    publishedYear,
+    availableCopies,
+  } = req.body;
+
+  try {
+    const book = await Book.findOne({ title: oldTitle });
+
+    if (!book) {
+      return res.status(404).json({ msg: "Book not found" });
+    }
+
+    const updatedBook = await Book.updateOne(
+      { title: oldTitle }, // condition
+      { title, author, category, type, ISBN, publishedYear, availableCopies }
+    );
+
+    res.status(200).json({ msg: "Book updated successfully" });
+  } catch (error) {
+    res.status(500).json({ msg: `Server error: ${error.message}` });
+  }
+};
+
+exports.deleteOneBook = async (req, res) => {
+  const { title } = req.params;
+
+  try {
+    const book = await Book.findOne({ title: title });
+
+    if (!book) {
+      return res.status(404).json({ msg: "Book not found" });
+    }
+
+    await Book.deleteOne({ title: title });
+
+    res.status(200).json({ msg: "Book deleted with success" });
+  } catch (error) {
+    res.status(500).json({ msg: `Server error: ${error.message}` });
+  }
+};

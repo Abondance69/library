@@ -1,6 +1,7 @@
 const express = require("express");
 const cors = require("cors");
 const bodeParser = require("body-parser");
+const cookieParser = require("cookie-parser");
 const dotenv = require("dotenv");
 const connectDB = require("./app/config/database");
 
@@ -13,16 +14,18 @@ const app = express();
 app.use(cors());
 app.use(bodeParser.json());
 app.use(express.json());
+app.use(cookieParser());
 
 const port = 3000;
 
 // routes
-app.use("/api", require("./app/routes/index"));
+app.use("/api", require("./app/routes/book"));
+app.use("/api", require("./app/routes/user"));
 
 app.get("/", (req, res) => {
     res.send("Hello World");
 });
 
 app.listen(port, () => {
-    console.log(`Server runing on port ${port}`);
+    console.log(`Server running on port ${port}`);
 });

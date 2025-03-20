@@ -12,8 +12,8 @@ export default function Login() {
   const [showPassword, setShowPassword] = useState(false);
   const [errors, setErrors] = useState({ email: "", password: "" });
 
+  const { login, loading } = useAuth();
   const navigate = useNavigate();
-  const { login, loading, error } = useAuth();
 
   const formValidate = () => {
     let valid = true;
@@ -44,11 +44,11 @@ export default function Login() {
     const formData = { email, password };
 
     try {
-      const user = await login(formData);
+      await login(formData);
       toast.success("Connexion réussie !");
       navigate("/");
     } catch (err) {
-      toast.error(error || "Échec de la connexion.");
+      toast.error(err.message);
     }
   };
 

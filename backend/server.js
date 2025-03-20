@@ -11,7 +11,15 @@ connectDB();
 
 const app = express();
 
-app.use(cors());
+app.use(
+  cors({
+    origin: "http://localhost:3000",
+    methods: ["GET", "POST", "PUT", "DELETE"],
+    allowedHeaders: ["Content-Type", "Authorization"],
+    credentials: true,
+  })
+);
+
 app.use(bodeParser.json());
 app.use(express.json());
 app.use(cookieParser());
@@ -23,9 +31,9 @@ app.use("/api", require("./app/routes/book"));
 app.use("/api", require("./app/routes/user"));
 
 app.get("/", (req, res) => {
-    res.send("Hello World");
+  res.send("Hello World");
 });
 
 app.listen(port, () => {
-    console.log(`Server running on port ${port}`);
+  console.log(`Server running on port ${port}`);
 });

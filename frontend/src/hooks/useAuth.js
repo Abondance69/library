@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import UserServices from "../services/UserServices";
 
 export const useAuth = () => {
@@ -14,15 +14,31 @@ export const useAuth = () => {
       const userServices = new UserServices();
       const response = await userServices.login(formData);
 
-      setUser(response.data);
+      setUser(response);
       setLoading(false);
 
-      return response.data;
+      return response;
     } catch (err) {
-      setError(err.response?.data?.message || "Erreur de connexion.");
+      setError(err.message);
       setLoading(false);
+      throw err;
     }
   };
 
-  return { login, loading, error, user };
+  const checkAuth = async () => {
+    try {
+      const userServices = new UserServices();
+      const response = await userServices.checkAuth();
+      console.log(response);
+      setUser(response.user);
+    } catch (err) {
+      setUser(null);
+    }
+  };
+
+  useEffect(() => {
+    checkAuth();
+  }, []);
+
+  return { login, loading, error, user, checkAuth };
 };

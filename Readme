@@ -1,7 +1,7 @@
-### Run backend
+### Run project
 ```bash
-cd backend
-npm start
+# run backend and frontend
+npm run start
 ```
 
 ### Author

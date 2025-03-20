@@ -7,10 +7,7 @@ const DB_NAME = process.env.DB_NAME;
 
 const connectDB = async () => {
   try {
-    await mongoose.connect(`${DB_CLUSTER}`, {
-      useNewUrlParser: true,
-      useUnifiedTopology: true
-    });
+    await mongoose.connect(`${DB_CLUSTER}`, {});
     console.log("✅ MongoDB connecté avec succès !");
   } catch (error) {
     console.error("❌ Erreur de connexion à MongoDB :", error);
@@ -18,4 +15,4 @@ const connectDB = async () => {
   }
 };
 
-module.exports = connectDB
+module.exports = connectDB;

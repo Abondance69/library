@@ -1,7 +1,15 @@
 ### Run project
 ```bash
-# run backend and frontend
-npm run start
+# Install backend package
+cd backend
+npm i
+
+# Install frontenf package
+cd frontend
+npm i
+
+# run backend and frontend (root document) via concurently package
+npm run start 
 ```
 
 ### Author

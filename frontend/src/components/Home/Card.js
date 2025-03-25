@@ -1,11 +1,9 @@
 import React, { useState } from "react";
 import { Link } from "react-router-dom";
-import { FaStar, FaCheckCircle } from "react-icons/fa";
 import { IoMdHeart, IoIosHeartEmpty } from "react-icons/io";
-import image from "../assets/images/image.jpg"; // Image du livre (tu peux changer cette source par une dynamique)
-import profile from "../assets/images/man.jpg"; // Image du profil de l'auteur (tu peux aussi la rendre dynamique)
+import image from "../../assets/images/image.jpg";
 
-export default function Card() {
+export default function Card({ book }) {
   const [favorite, setFavorite] = useState(false);
 
   const handleFavorite = (e) => {
@@ -31,20 +29,19 @@ export default function Card() {
       <div className="p-4">
         {/* Titre */}
         <div className="text-gray-900 hover:text-teal-700 pb-3">
-          <Link to="/book/1">Développeur flutter pour les nulls</Link>
+          <Link to="/book/1">{book.title}</Link>
         </div>
 
         {/* Auteur */}
         <div className="flex items-center justify-between mt-3">
           <div className="flex items-center">
             <Link className="font-semibold text-gray-800 flex justify-center items-center text-sm hover:underline transition">
-              John Doe
+              {book.author}
             </Link>
           </div>
 
           <div className="flex items-center justify-end">
-            <FaStar className="text-yellow-400" />
-            <span className="text-sm text-gray-600 ml-1">4.3 (12 avis)</span>
+            <span className="text-sm text-gray-600 ml-1">{book.category}</span>
           </div>
         </div>
       </div>

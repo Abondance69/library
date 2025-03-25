@@ -59,7 +59,7 @@ exports.loginUser = async (req, res) => {
     res.cookie("token", token, {
       httpOnly: true,
       maxAge: 3600000,
-      secure: true,
+      secure: process.env.NODE_ENV === "production",
     });
 
     res.status(200).json({ msg: "User successfully logged in" });
@@ -83,7 +83,9 @@ exports.getUser = async (req, res) => {
       return res.status(401).json({ msg: "User not authenticated" });
     }
 
-    const user = await User.findById({_id: req.user.userId}).select('-password').select('-__v');;
+    const user = await User.findById({ _id: req.user.userId })
+      .select("-password")
+      .select("-__v");
 
     if (!user) {
       return res.status(404).json({ msg: "User not found" });

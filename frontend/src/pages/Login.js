@@ -1,9 +1,10 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import { FaRegEyeSlash, FaRegEye } from "react-icons/fa";
-import { useAuth } from "../hooks/useAuth";
+import { useDispatch, useSelector } from "react-redux";
+import { loginUser } from "../store/slices/authSlice";
 import Loader from "../components/Loader";
 
 export default function Login() {
@@ -12,8 +13,16 @@ export default function Login() {
   const [showPassword, setShowPassword] = useState(false);
   const [errors, setErrors] = useState({ email: "", password: "" });
 
-  const { login, loading } = useAuth();
+  const dispatch = useDispatch();
   const navigate = useNavigate();
+
+  const { loading, isAuthenticated } = useSelector((state) => state.auth);
+
+  useEffect(() => {
+    if (isAuthenticated) {
+      navigate("/");
+    }
+  }, [isAuthenticated, navigate]);
 
   const formValidate = () => {
     let valid = true;
@@ -41,41 +50,28 @@ export default function Login() {
     e.preventDefault();
     if (!formValidate()) return;
 
-    const formData = { email, password };
-
     try {
-      await login(formData);
+      await dispatch(loginUser({ email, password })).unwrap();
       toast.success("Connexion réussie !");
       navigate("/");
     } catch (err) {
-      toast.error(err.message);
+      toast.error(err || "Échec de la connexion.");
     }
   };
 
   return (
     <div className="flex justify-center text-gray-600">
-      <ToastContainer
-        position="bottom-right"
-        autoClose={5000}
-        hideProgressBar={false}
-        closeOnClick
-        pauseOnHover
-        draggable
-      />
+      <ToastContainer position="bottom-right" autoClose={5000} hideProgressBar={false} />
 
       <div className="shadow bg-white p-4 mt-4 max-w-md sm:mx-4">
         <h1 className="font-bold text-xl md:text-2xl">Se connecter</h1>
-        <p className="text-gray-500">
-          Entrer votre email et mot de passe pour vous connecter
-        </p>
+        <p className="text-gray-500">Entrer votre email et mot de passe pour vous connecter</p>
+
         <div className="w-full rounded-lg divide-y divide-gray-200">
           <div className="pt-7 pb-3">
             <form onSubmit={handleSubmit}>
               <div className="mb-4">
-                <label
-                  htmlFor="email"
-                  className="block text-sm font-semibold mb-2"
-                >
+                <label htmlFor="email" className="block text-sm font-semibold mb-2">
                   Email
                 </label>
                 <input
@@ -84,23 +80,17 @@ export default function Login() {
                   id="email"
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
-                  className={`w-full p-3 text-sm border border-gray-300 focus:outline-none focus:border-teal-600 transition duration-200 rounded-sm ${
-                    errors.email ? "border-red-600 focus:border-red-500" : ""
-                  }`}
+                  className={`w-full p-3 text-sm border ${
+                    errors.email ? "border-red-600" : "border-gray-300"
+                  } focus:outline-none focus:border-teal-600 transition rounded-sm`}
                 />
-                {errors.email && (
-                  <small className="text-red-600 text-xs">{errors.email}</small>
-                )}
+                {errors.email && <small className="text-red-600 text-xs">{errors.email}</small>}
               </div>
 
-              <div className="relative">
-                <label
-                  htmlFor="password"
-                  className="block text-sm font-semibold mb-2"
-                >
+              <div className="relative mb-4">
+                <label htmlFor="password" className="block text-sm font-semibold mb-2">
                   Mot de passe
                 </label>
-
                 <div className="relative">
                   <input
                     type={showPassword ? "text" : "password"}
@@ -108,34 +98,22 @@ export default function Login() {
                     id="password"
                     value={password}
                     onChange={(e) => setPassword(e.target.value)}
-                    className={`w-full p-3 text-sm border border-gray-300 focus:outline-none focus:border-teal-600 transition duration-200 rounded-sm ${
-                      errors.password
-                        ? "border-red-600 focus:border-red-500"
-                        : ""
-                    }`}
+                    className={`w-full p-3 text-sm border ${
+                      errors.password ? "border-red-600" : "border-gray-300"
+                    } focus:outline-none focus:border-teal-600 transition rounded-sm`}
                   />
-
                   <button
                     type="button"
                     className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-500"
                     onClick={() => setShowPassword(!showPassword)}
                   >
-                    {showPassword ? (
-                      <FaRegEyeSlash className="text-xl" />
-                    ) : (
-                      <FaRegEye className="text-xl" />
-                    )}
+                    {showPassword ? <FaRegEyeSlash className="text-xl" /> : <FaRegEye className="text-xl" />}
                   </button>
                 </div>
-
-                {errors.password && (
-                  <small className="text-red-600 text-xs text-start">
-                    {errors.password}
-                  </small>
-                )}
+                {errors.password && <small className="text-red-600 text-xs">{errors.password}</small>}
               </div>
 
-              <div className="text-right mb-4 mt-2">
+              <div className="text-right mb-4">
                 <Link to="/forgot" className="text-teal-800">
                   Mot de passe oublié ?
                 </Link>
@@ -143,7 +121,7 @@ export default function Login() {
 
               <button
                 type="submit"
-                className={`w-full px-4 bg-teal-800 hover:bg-teal-900 transition text-white text-sm font-semibold focus:outline-none focus:ring-2 focus:ring-blue-400 focus:ring-opacity-75 duration-200 rounded-sm ${
+                className={`w-full px-4 bg-teal-800 hover:bg-teal-900 transition text-white text-sm font-semibold rounded-sm ${
                   loading ? "py-1" : "py-3"
                 }`}
                 disabled={loading}
@@ -153,13 +131,11 @@ export default function Login() {
             </form>
           </div>
 
-          <div className="pb-5">
-            <div className="text-center mt-2">
-              <span>Pas de compte ? </span>
-              <Link to="/register" className="text-teal-800">
-                Créer un compte
-              </Link>
-            </div>
+          <div className="pb-5 text-center mt-2">
+            <span>Pas de compte ? </span>
+            <Link to="/register" className="text-teal-800">
+              Créer un compte
+            </Link>
           </div>
         </div>
       </div>

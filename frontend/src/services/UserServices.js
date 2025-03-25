@@ -5,7 +5,7 @@ import { CONFIG } from "../config";
 export default class UserServices {
   async login(formData) {
     try {
-      const response = await axios.post(`${CONFIG.BACKEND_API_URL}/login`, formData, {
+      const response = await axios.post(`${CONFIG.BACKEND_API_URL}/api/login`, formData, {
         headers: {
           "Content-Type": "application/json",
         },
@@ -32,7 +32,7 @@ export default class UserServices {
         throw new Error("Aucun token trouvé. Veuillez vous reconnecter.");
       }
 
-      const response = await axios.get(`${CONFIG.BACKEND_API_URL}/user`, {
+      const response = await axios.get(`${CONFIG.BACKEND_API_URL}/api/user`, {
         headers: {
           Authorization: `Bearer ${token}`,
         },

@@ -1,7 +1,7 @@
 import { useState, useEffect } from "react";
 import BookServices from "../services/BookServices";
 
-export const useAuth = () => {
+export const useBook = () => {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
   const [data, setData] = useState(null);
@@ -10,9 +10,11 @@ export const useAuth = () => {
     try {
       const bookServices = new BookServices();
       const response = await bookServices.getAllBooks();
-      console.log(response);
-      setData(response.data);
+      // console.log(response.books);
+      setData(response.books);
+      setLoading(false);
     } catch (err) {
+      setError(true);
       setData(null);
     }
   };

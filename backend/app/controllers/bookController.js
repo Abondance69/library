@@ -43,13 +43,13 @@ exports.getAllBooks = async (req, res) => {
 };
 
 exports.getOneBook = async (req, res) => {
-  const { title } = req.params;
+  const { id } = req.params;
 
   try {
-    const book = await Book.findOne({ title: title });
+    const book = await Book.findById({ _id: id });
 
     if (!book) {
-      res.status(404).json({ msg: "Book not found" });
+      return res.status(404).json({ msg: "Book not found" });
     }
 
     res.status(200).json(book);
@@ -59,7 +59,8 @@ exports.getOneBook = async (req, res) => {
 };
 
 exports.updateOneBook = async (req, res) => {
-  const oldTitle = req.params.title;
+  const { id } = req.params;
+
   const {
     title,
     author,
@@ -71,14 +72,14 @@ exports.updateOneBook = async (req, res) => {
   } = req.body;
 
   try {
-    const book = await Book.findOne({ title: oldTitle });
+    const book = await Book.findById({ _id: id });
 
     if (!book) {
       return res.status(404).json({ msg: "Book not found" });
     }
 
     const updatedBook = await Book.updateOne(
-      { title: oldTitle }, // condition
+      { _id: id }, // condition
       { title, author, category, type, ISBN, publishedYear, availableCopies }
     );
 
@@ -89,16 +90,16 @@ exports.updateOneBook = async (req, res) => {
 };
 
 exports.deleteOneBook = async (req, res) => {
-  const { title } = req.params;
+  const { id } = req.params;
 
   try {
-    const book = await Book.findOne({ title: title });
+    const book = await Book.findById({ _id: id });
 
     if (!book) {
       return res.status(404).json({ msg: "Book not found" });
     }
 
-    await Book.deleteOne({ title: title });
+    await Book.deleteOne({ _id : id });
 
     res.status(200).json({ msg: "Book deleted with success" });
   } catch (error) {

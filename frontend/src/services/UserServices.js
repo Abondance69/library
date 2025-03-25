@@ -3,14 +3,43 @@ import Cookies from "js-cookie";
 import { CONFIG } from "../config";
 
 export default class UserServices {
+  async register(formData) {
+    try {
+      const response = await axios.post(
+        `${CONFIG.BACKEND_API_URL}/api/register`,
+        formData,
+        {
+          headers: {
+            "Content-Type": "application/json",
+          },
+          withCredentials: true,
+        }
+      );
+
+      return response.data;
+    } catch (error) {
+      if (error.response) {
+        throw new Error(error.response.data.msg || "Erreur de connexion");
+      } else if (error.request) {
+        throw new Error("Aucune réponse du serveur. Vérifiez votre connexion.");
+      } else {
+        throw new Error("Une erreur inconnue est survenue.");
+      }
+    }
+  }
+
   async login(formData) {
     try {
-      const response = await axios.post(`${CONFIG.BACKEND_API_URL}/api/login`, formData, {
-        headers: {
-          "Content-Type": "application/json",
-        },
-        withCredentials: true,
-      });
+      const response = await axios.post(
+        `${CONFIG.BACKEND_API_URL}/api/login`,
+        formData,
+        {
+          headers: {
+            "Content-Type": "application/json",
+          },
+          withCredentials: true,
+        }
+      );
 
       return response.data;
     } catch (error) {
@@ -45,4 +74,3 @@ export default class UserServices {
     }
   }
 }
-

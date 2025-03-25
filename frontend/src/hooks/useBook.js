@@ -19,9 +19,25 @@ export const useBook = () => {
     }
   };
 
+  const getBook = async (id) => {
+    try {
+      const bookServices = new BookServices();
+      const response = await bookServices.getBook(id);
+      return response;
+    } catch (error) {}
+  };
+
+  const deleteBook = async (id) => {
+    try {
+      const bookServices = new BookServices();
+      const response = await bookServices.deleteBook(id);
+      return response;
+    } catch (error) {}
+  }
+
   useEffect(() => {
     getAllBooks();
   }, []);
 
-  return { loading, error, data, getAllBooks };
+  return { loading, error, data, getAllBooks, getBook, deleteBook };
 };

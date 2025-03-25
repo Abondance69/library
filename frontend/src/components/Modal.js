@@ -1,20 +1,40 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { MdClose } from "react-icons/md";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
-import BookServices from "../../services/BookServices";
+import BookServices from "../services/BookServices";
 
-export default function Modal({ handleModalToggle }) {
-  const [title, setTitle] = useState("");
-  const [author, setAuthor] = useState("");
-  const [category, setCategory] = useState("");
-  const [type, setType] = useState("");
-  const [publishedYear, setPublishedYear] = useState("");
-  const [ISBN, setISBN] = useState("");
-  const [availableCopies, setAvailableCopies] = useState(0);
+export default function Modal({ handleModalToggle, book }) {
+  const [title, setTitle] = useState(book?.title || "");
+  const [author, setAuthor] = useState(book?.author || "");
+  const [category, setCategory] = useState(book?.category || "");
+  const [type, setType] = useState(book?.type || "");
+  const [publishedYear, setPublishedYear] = useState(book?.publishedYear || "");
+  const [ISBN, setISBN] = useState(book?.ISBN || "");
+  const [availableCopies, setAvailableCopies] = useState(
+    book?.availableCopies || 0
+  );
   const [loading, setLoading] = useState(false);
-  const [error, setError] = useState(null);
-  const [successMessage, setSuccessMessage] = useState("");
+
+  useEffect(() => {
+    if (book) {
+      setTitle(book.title);
+      setAuthor(book.author);
+      setCategory(book.category);
+      setType(book.type);
+      setPublishedYear(book.publishedYear);
+      setISBN(book.ISBN);
+      setAvailableCopies(book.availableCopies);
+    } else {
+      setTitle("");
+      setAuthor("");
+      setCategory("");
+      setType("");
+      setPublishedYear("");
+      setISBN("");
+      setAvailableCopies(0);
+    }
+  }, [book]);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -33,18 +53,20 @@ export default function Modal({ handleModalToggle }) {
 
     try {
       const bookServices = new BookServices();
-      const response = await bookServices.createBook(bookData);
 
-      toast.success("Livre ajouté avec succès !");
-      setError(null);
+      if (!book) {
+        await bookServices.createBook(bookData);
+        toast.success("Livre ajouté avec succès !");
+      } else {
+        await bookServices.updateBook(book._id, bookData);
+        toast.success("Livre modifié avec succès !");
+      }
+
       handleModalToggle();
-      // console.log(response);
+      setTimeout(() => window.location.reload(), 1000);
     } catch (err) {
-      setError(false);
-      toast.error("Erreur lors de la création du livre.");
-      setSuccessMessage("");
+      toast.error("Erreur lors de l'opération.");
     }
-
     setLoading(false);
   };
 
@@ -156,7 +178,6 @@ export default function Modal({ handleModalToggle }) {
             </select>
           </div>
 
-          {/* ISBN */}
           <div className="mb-3">
             <label htmlFor="ISBN" className="block text-sm font-semibold mb-2">
               ISBN
@@ -171,7 +192,6 @@ export default function Modal({ handleModalToggle }) {
             />
           </div>
 
-          {/* Copies disponibles et Année de publication */}
           <div className="mb-3 flex flex-col sm:flex-row gap-4">
             <div className="flex-1">
               <label
@@ -183,6 +203,7 @@ export default function Modal({ handleModalToggle }) {
               <input
                 type="number"
                 name="availableCopies"
+                min="0"
                 id="availableCopies"
                 value={availableCopies}
                 onChange={(e) => setAvailableCopies(e.target.value)}

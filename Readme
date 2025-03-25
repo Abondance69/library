@@ -1,3 +1,12 @@
+## Library
+
+📌 Fonctionnalités
+- ✅ Gestion des livres
+- 📖 Ajouter un livre
+- ✏️ Modifier un livre
+- ❌ Supprimer un livre
+- 🔑 Authentification
+
 ### Run project
 ```bash
 # Install backend package
